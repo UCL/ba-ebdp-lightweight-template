@@ -35,25 +35,30 @@ If you will be using the code and notebooks for continued development, then it m
 
 Start by setting-up a Github account with two factor authentication by following Part 1 of their [onboarding](https://docs.github.com/en/get-started/onboarding/getting-started-with-your-github-account) guide.
 
+Once you have a Github account, you can either fork this template repository or you can create your own from scratch by following the Environment Setup guidelines below.
+
+- If creating your own repo from scratch, you can refer to this template repository's structure, `.gitignore`, and `pyproject.toml` files for clues on how to complete setup.
+- If forking this repository, run `pdm install` to initialise a virtual environment and install the required python packages.
+
+## Environment Setup
+
 Create a Github repository inside your Github.com account, and then clone this repository to your local machine. This can be done manually, but if new to `git` and repository management then it can be easier to get started with the [GitHub Desktop](https://desktop.github.com) utility. Once you've cloned your new repository to a local directory, then open this folder from VS code. Note that VS code has built-in `git` synchronisation features to help commit changes and for pulling and pushing changes to Github.com.
 
 > Don't clone or create `git` managed folders in cloud-synced directories, i.e. avoid use of Dropbox or iCloud directories.
-
-## Environment setup
 
 Once you've created your Github repository, cloned it to your local machine, and opened it in VS code:
 
 - Open the integrated terminal window.
 - Add a `.gitignore` file in the root of your repository directory, notice the leading period. This file lists file types and directories that should be ignored by `git`. Copy and paste the content from [this file](https://github.com/UCL/ba-ebdp-toolkit/blob/main/.gitignore) as a starting point. Once this file is created, commit this change and sync to Github using the built-in VS Code tools.
 - Add a `README.md` file in the root of you repository. This file serves as a landing page for your repository on Github.com and should contain any introductory or setup instructions for your repo.
-- Use PDM to initialise the repository by typing `pdm init` and allow PDM to create a "virtual environment". While initialising your repository, PDM will create a `pyproject.toml` file in your repo which lists metadata about the project and the packages required by the project. If cloning this repository to another computer, you are then able to run `pdm install` to install any packages listed in your `pyproject.toml` file. To update packages, run `pdm update`.
+- Use PDM to initialise the repository by typing `pdm init`; select your `brew` python version and allow PDM to create a "virtual environment". While initialising your repository, PDM will create a `pyproject.toml` file in your repo which lists metadata about the project and the packages required by the project. If cloning this repository to another computer, you are then able to run `pdm install` to install any packages listed in your `pyproject.toml` file. To update packages, run `pdm update`.
 - By using a virtual environment, your packages remain contained within the project, thereby preventing complications from sharing packages system-wide. VS code will ordinarily auto-detect the virtual environment and will ask to use the virtual environment; click "yes" and check that VS code is using the virtual environment instead of the system or brew python.
-- Install any required python packages using `pdm add` followed by the desired packages. For example, `pdm add shapely geopandas cityseer osmnx momepy`. This will add the packages to your `pyproject.toml` file and install them in your virtual environment.
+- Install any required python packages using `pdm add` followed by the desired packages. For example, `pdm add shapely geopandas cityseer osmnx momepy networkx pandas matplotlib ipykernel`. This will add the packages to your `pyproject.toml` file and install them in your virtual environment.
 - Commit the changes and sync to the remote.
 
 ## Notebooks vs Code Cells
 
-- The following examples make use of code cells in regular python files. The cells are demarcated by `#%%` and VS code will then show buttons for running a cell, with outputs generated to separate pane in the IDE. This works similarly to Python notebooks, and the code cells workflows can generally be replicated as notebooks without issue.
+- The examples in this template repository make use of code cells which can be used from regular python files where supported by the IDE. The cells are demarcated by `#%%` and VS code will then show buttons for running a cell, with outputs generated to separate pane. This works similarly to Python notebooks, and the code cells workflows can generally be replicated as notebooks without issue if that were preferable.
 
 ## Data
 
@@ -65,3 +70,5 @@ Once you've created your Github repository, cloned it to your local machine, and
   - [urban atlas](https://land.copernicus.eu/local/urban-atlas/urban-atlas-2018)
   - [Tree cover](https://land.copernicus.eu/local/urban-atlas/street-tree-layer-stl-2018) (~36GB vectors).
   - [Digital Height Model](https://land.copernicus.eu/local/urban-atlas/building-height-2012)
+
+## Workflows
