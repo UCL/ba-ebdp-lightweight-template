@@ -53,7 +53,7 @@ Once you've created your Github repository, cloned it to your local machine, and
 - Add a `README.md` file in the root of you repository. This file serves as a landing page for your repository on Github.com and should contain any introductory or setup instructions for your repo.
 - Use PDM to initialise the repository by typing `pdm init`; select your `brew` python version and allow PDM to create a "virtual environment". While initialising your repository, PDM will create a `pyproject.toml` file in your repo which lists metadata about the project and the packages required by the project. If cloning this repository to another computer, you are then able to run `pdm install` to install any packages listed in your `pyproject.toml` file. To update packages, run `pdm update`.
 - By using a virtual environment, your packages remain contained within the project, thereby preventing complications from sharing packages system-wide. VS code will ordinarily auto-detect the virtual environment and will ask to use the virtual environment; click "yes" and check that VS code is using the virtual environment instead of the system or brew python.
-- Install any required python packages using `pdm add` followed by the desired packages. For example, `pdm add shapely geopandas cityseer osmnx momepy networkx pandas matplotlib ipykernel`. This will add the packages to your `pyproject.toml` file and install them in your virtual environment.
+- Install any required python packages using `pdm add` followed by the desired packages. For example, `pdm add shapely geopandas cityseer osmnx momepy networkx pandas matplotlib ipykernel pyproj`. This will add the packages to your `pyproject.toml` file and install them in your virtual environment.
 - Commit the changes and sync to the remote.
 
 ## Notebooks vs Code Cells
@@ -63,7 +63,8 @@ Once you've created your Github repository, cloned it to your local machine, and
 ## Data
 
 - Create a folder called `temp` inside the root of your repository. Check that this is ignored by the `.gitignore` file. Place any data or temporary files in this directory so that these files are not synced to Github, which would otherwise introduce unwanted bloat into your repository.
-- Define an area of extents in QGIS and save to a GPKG file in your `temp` directory; this will be loaded from the notebooks for the subsequent analysis. Alternatively, create a copy of the `extent_download.py` template script to download an area of interest using `osmnx`.
+- Define an area of extents in QGIS and save to a GPKG file in your `temp` directory; this will be loaded from the notebooks for the subsequent analysis. Alternatively, use the `workflows/download_extent.py` template script to download an area of interest using `osmnx`.
+- Download the OSM network for the extents by following the `workflows/download_network.py` template script.
 - The OSM street network and landuses will be downloaded automatically from within the notebooks for the given extent.
 - The following data sources should be downloaded manually for the extent of interest. (Copernicus downloads can be filtered by keyword):
   - [Eurostat census grid population count](https://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/population-distribution-demography/geostat#geostat11). This is count per km2.
