@@ -64,11 +64,15 @@ Once you've created your Github repository, cloned it to your local machine, and
 
 - Create a folder called `temp` inside the root of your repository. Check that this is ignored by the `.gitignore` file. Place any data or temporary files in this directory so that these files are not synced to Github, which would otherwise introduce unwanted bloat into your repository.
 - Define an area of extents in QGIS and save to a GPKG file in your `temp` directory; this will be loaded from the notebooks for the subsequent analysis. Alternatively, use the `workflows/download_extent.py` template script to download an area of interest using `osmnx`.
-- Download the OSM network for the extents by following the `workflows/download_network.py` template script.
-- The OSM street network and landuses will be downloaded automatically from within the notebooks for the given extent.
-- The following data sources should be downloaded manually for the extent of interest. (Copernicus downloads can be filtered by keyword):
+- Follow the scripts:
+  - [](workflows/download_extent.py)
+  - [](workflows/download_network.py)
+  - [](workflows/compute_centrality.py)
+  - [](workflows/compute_accessibility.py)
+  - [](workflows/download_buildings.py)
+- Additional metrics can be computed based on available datasets. Prepare the datasets in QGIS and save as a GPKG for the region of interest. We will then create a suitable workflow for ingesting and using the dataset. Examples of useful datasets may include:
   - [Eurostat census grid population count](https://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/population-distribution-demography/geostat#geostat11). This is count per km2.
-  - [urban atlas](https://land.copernicus.eu/local/urban-atlas/urban-atlas-2018)
+  - [Urban atlas](https://land.copernicus.eu/local/urban-atlas/urban-atlas-2018) for blocks.
   - [Tree cover](https://land.copernicus.eu/local/urban-atlas/street-tree-layer-stl-2018) (~36GB vectors).
   - [Digital Height Model](https://land.copernicus.eu/local/urban-atlas/building-height-2012)
 

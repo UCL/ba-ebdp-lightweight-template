@@ -4,8 +4,11 @@ from cityseer.tools import graphs, io
 from pyproj import Transformer
 from shapely import geometry
 
-# read your extents file
-extents_gpd = gpd.read_file("../temp/cyprus_boundary_merged.gpkg")
+# location key for naming files
+location_key = "nicosia"
+
+# read the extents file
+extents_gpd = gpd.read_file(f"../temp/{location_key}_boundary.gpkg")
 extents_gpd
 
 # %%
@@ -13,7 +16,7 @@ extents_gpd
 # fetch the row's geometry as a shapely geom
 extents_geom_wgs = extents_gpd.iloc[0].geometry
 
-# if your polygon is in a geographic coordinate system, e.g. WGS84 / EPSG:4326
+# if the polygon is in a geographic coordinate system, e.g. WGS84 / EPSG:4326
 # then convert it to a locally suitable projected CRS before buffering
 # Define the coordinate transformation:
 # - in this case the input geom is from OSM via EPSG:4326
@@ -33,7 +36,7 @@ extents_geom_buff = extents_geom.buffer(10000)
 
 # %%
 # this will download the OSM network with minimal simplification
-# specify the input and output EPSG CRS appropriate to your case
+# specify the input and output EPSG CRS appropriate to the case
 # this is returned as a networkX graph
 G_raw_nx = io.osm_graph_from_poly(
     extents_geom_buff, simplify=False, poly_epsg_code=3035, to_epsg_code=3035
@@ -57,8 +60,8 @@ G_raw_nx
 ) = io.network_structure_from_nx(G_raw_nx, crs=3035)
 
 # %% save primal to GPKG
-nodes_gdf_primal.to_file("../temp/cyprus_network_nodes_primal.gpkg")
-edges_gdf_primal.to_file("../temp/cyprus_network_edges_primal.gpkg")
+nodes_gdf_primal.to_file(f"../temp/{location_key}_network_raw_nodes_primal.gpkg")
+edges_gdf_primal.to_file(f"../temp/{location_key}_network_raw_edges_primal.gpkg")
 
 # %%
 # dual representations can be preferable for visualisation
@@ -73,7 +76,7 @@ G_raw_nx_dual = graphs.nx_to_dual(G_raw_nx)
 
 # attach the primal edges to their corresponding dual nodes
 # this is useful for downstream visualisation
-# i.e. it is often more convenient to visualise the dual node data as the corresponding source edge
+# i.e. it is often more convenient to visualise the dual node data as the corresponding source (primal) edge
 # GeoPandas can't be saved with multiple geom columns, so use WKT for now
 # a function is defined which copies geoms from the originating networkx graph
 def copy_primal_edges(row):
@@ -86,5 +89,5 @@ def copy_primal_edges(row):
 nodes_gdf_dual["primal_edge_geom"] = nodes_gdf_dual.apply(copy_primal_edges, axis=1)
 
 # %% save dual to GPKG
-nodes_gdf_dual.to_file("../temp/cyprus_network_nodes_dual.gpkg")
-edges_gdf_dual.to_file("../temp/cyprus_network_edges_dual.gpkg")
+nodes_gdf_dual.to_file(f"../temp/{location_key}_network_raw_nodes_dual.gpkg")
+edges_gdf_dual.to_file(f"../temp/{location_key}_network_raw_edges_dual.gpkg")
