@@ -91,7 +91,7 @@ G_clean = graphs.nx_iron_edges(G_clean)
 
 # create the nodes and edges GeoDataFrames from the networkX graph
 # the network structure can be ignored for now because it can be recreated later
-edges_gdf_primal = io.generic_edges_geopandas_from_nx(G_clean, crs=3035)
+edges_gdf_primal = io.geopandas_from_nx(G_clean, crs=3035)
 
 # %%
 # save primal to GPKG and do inspection or further cleaning from QGIS
