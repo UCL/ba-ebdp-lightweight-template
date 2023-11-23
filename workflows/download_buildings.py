@@ -30,7 +30,7 @@ bldgs_gdf = bldgs_gdf[
 # filter geometries
 bldgs_gdf = bldgs_gdf[bldgs_gdf["geometry"].type.isin(["Polygon", "MultiPolygon"])]
 # project
-bldgs_gdf = bldgs_gdf.to_crs(3035)
+bldgs_gdf = bldgs_gdf.to_crs(6312)
 # %%
 # calculate momepy stats
 # these are some examples, see the momepy docs for more options

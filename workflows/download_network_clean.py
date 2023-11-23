@@ -34,14 +34,14 @@ extents_geom_wgs = extents_gpd.iloc[0].geometry
 # then convert it to a locally suitable projected CRS before buffering
 # Define the coordinate transformation:
 # - in this case the input geom is from OSM via EPSG:4326
-# - in this case the output geom can uses EPSG:3035 which is appropriate for the EU
-transformer = Transformer.from_crs("EPSG:4326", "EPSG:3035", always_xy=True)
+# - in this case the output geom can uses EPSG:6312 which is appropriate for Cyprus
+transformer = Transformer.from_crs("EPSG:4326", "EPSG:6312", always_xy=True)
 # Apply the transformation to each point in the Polygon
 extents_geom = geometry.Polygon(
     [transformer.transform(x, y) for x, y in extents_geom_wgs.exterior.coords]
 )
 
-# simplify the geometry, otherwise the OSM API migth complain of overly long URIs
+# simplify the geometry, otherwise the OSM API might complain of overly long URIs
 extents_geom = extents_geom.convex_hull.simplify(100)
 
 # buffer by the largest distance to be used for the largest centralities or accessibility analysis
@@ -56,8 +56,8 @@ extents_geom_buff = extents_geom.buffer(10000)
 G_raw_nx = io.osm_graph_from_poly(
     extents_geom_buff,
     simplify=False,
-    poly_epsg_code=3035,
-    to_epsg_code=3035,
+    poly_epsg_code=6312,
+    to_epsg_code=6312,
 )
 # set nodes to live where they intersect the original boundary
 # nodes outside of this are only used for preventing edge roll-off
@@ -91,7 +91,7 @@ G_clean = graphs.nx_iron_edges(G_clean)
 
 # create the nodes and edges GeoDataFrames from the networkX graph
 # the network structure can be ignored for now because it can be recreated later
-edges_gdf_primal = io.geopandas_from_nx(G_clean, crs=3035)
+edges_gdf_primal = io.geopandas_from_nx(G_clean, crs=6312)
 
 # %%
 # save primal to GPKG and do inspection or further cleaning from QGIS
@@ -121,7 +121,7 @@ G_clean_nx_dual = graphs.nx_to_dual(G_clean_nx)
     nodes_gdf_dual,
     edges_gdf_dual,
     _network_structure_dual,
-) = io.network_structure_from_nx(G_clean_nx_dual, crs=3035)
+) = io.network_structure_from_nx(G_clean_nx_dual, crs=6312)
 
 
 # attach the primal edges to their corresponding dual nodes

@@ -23,7 +23,7 @@ dual_nx = io.nx_from_cityseer_geopandas(nodes_gdf_dual_in, edges_gdf_dual_in)
 dual_nx_wt = graphs.nx_weight_by_dissolved_edges(dual_nx)
 # generate the network structure
 nodes_gdf_dual, edges_gdf_dual, network_structure_dual = io.network_structure_from_nx(
-    dual_nx_wt, crs=3035
+    dual_nx_wt, crs=6312
 )
 # %%
 # manually copy across primal edge geoms
@@ -39,7 +39,7 @@ nodes_gdf_dual["line_geometry"] = nodes_gdf_dual["primal_edge_geom"].apply(loads
 # Set this new column as the main geometry column
 nodes_gdf_dual.set_geometry("line_geometry", inplace=True)
 # set the CRS
-nodes_gdf_dual["line_geometry"].set_crs("EPSG:3035", inplace=True)
+nodes_gdf_dual["line_geometry"].set_crs("EPSG:6312", inplace=True)
 # GPKG can only handle a single official geom column
 # copy old geom column to point_geom as WKT
 nodes_gdf_dual["point_geom"] = nodes_gdf_dual["geom"].to_wkt()
@@ -64,3 +64,5 @@ nodes_gdf_dual = networks.node_centrality_simplest(
 
 # save
 nodes_gdf_dual.to_file(f"../temp/{location_key}_network_centrality_raw.gpkg")
+
+# %%
