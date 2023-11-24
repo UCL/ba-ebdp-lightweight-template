@@ -20,8 +20,8 @@ extents_geom_wgs = extents_gpd.iloc[0].geometry
 # then convert it to a locally suitable projected CRS before buffering
 # Define the coordinate transformation:
 # - in this case the input geom is from OSM via EPSG:4326
-# - in this case the output geom can uses EPSG:3035 which is appropriate for the EU
-transformer = Transformer.from_crs("EPSG:4326", "EPSG:3035", always_xy=True)
+# - in this case the output geom can uses EPSG:6312 which is appropriate for the EU
+transformer = Transformer.from_crs("EPSG:4326", "EPSG:6312", always_xy=True)
 # Apply the transformation to each point in the Polygon
 extents_geom = geometry.Polygon(
     [transformer.transform(x, y) for x, y in extents_geom_wgs.exterior.coords]
@@ -39,8 +39,9 @@ extents_geom_buff = extents_geom.buffer(10000)
 # specify the input and output EPSG CRS appropriate to the case
 # this is returned as a networkX graph
 G_raw_nx = io.osm_graph_from_poly(
-    extents_geom_buff, simplify=False, poly_epsg_code=3035, to_epsg_code=3035
+    extents_geom_buff, simplify=False, poly_epsg_code=6312, to_epsg_code=6312
 )
+# %%
 # set nodes to live where they intersect the original boundary
 # nodes outside of this are only used for preventing edge roll-off
 for nd_key, nd_data in G_raw_nx.nodes(data=True):
@@ -57,7 +58,7 @@ G_raw_nx
     nodes_gdf_primal,
     edges_gdf_primal,
     _network_structure_primal,
-) = io.network_structure_from_nx(G_raw_nx, crs=3035)
+) = io.network_structure_from_nx(G_raw_nx, crs=6312)
 
 # %% save primal to GPKG
 nodes_gdf_primal.to_file(f"../temp/{location_key}_network_raw_nodes_primal.gpkg")
@@ -71,9 +72,9 @@ G_raw_nx_dual = graphs.nx_to_dual(G_raw_nx)
     nodes_gdf_dual,
     edges_gdf_dual,
     _network_structure_dual,
-) = io.network_structure_from_nx(G_raw_nx_dual, crs=3035)
+) = io.network_structure_from_nx(G_raw_nx_dual, crs=6312)
 
-
+# %%
 # attach the primal edges to their corresponding dual nodes
 # this is useful for downstream visualisation
 # i.e. it is often more convenient to visualise the dual node data as the corresponding source (primal) edge

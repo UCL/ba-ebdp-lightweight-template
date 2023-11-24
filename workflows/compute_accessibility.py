@@ -28,7 +28,7 @@ edges_gdf_dual_in = edges_gdf_dual_in.set_index("index")
 dual_nx = io.nx_from_cityseer_geopandas(nodes_gdf_dual_in, edges_gdf_dual_in)
 # generate the network structure
 nodes_gdf_dual, edges_gdf_dual, network_structure_dual = io.network_structure_from_nx(
-    dual_nx, crs=3035
+    dual_nx, crs=6312
 )
 # manually copy across primal edge geoms
 # this is done so that results can be visualised as lines instead of points
@@ -43,7 +43,7 @@ nodes_gdf_dual["line_geometry"] = nodes_gdf_dual["primal_edge_geom"].apply(loads
 # Set this new column as the main geometry column
 nodes_gdf_dual.set_geometry("line_geometry", inplace=True)
 # set the CRS
-nodes_gdf_dual["line_geometry"].set_crs("EPSG:3035", inplace=True)
+nodes_gdf_dual["line_geometry"].set_crs("EPSG:6312", inplace=True)
 # GPKG can only handle a single official geom column
 # copy old geom column to point_geom as WKT
 nodes_gdf_dual["point_geom"] = nodes_gdf_dual["geom"].to_wkt()
@@ -60,8 +60,8 @@ extents_geom_wgs = extents_gpd.iloc[0].geometry
 # then convert it to a locally suitable projected CRS before buffering
 # Define the coordinate transformation:
 # - in this case the input geom is from OSM via EPSG:4326
-# - in this case the output geom can uses EPSG:3035 which is appropriate for the EU
-transformer_from_wgs = Transformer.from_crs("EPSG:4326", "EPSG:3035", always_xy=True)
+# - in this case the output geom can uses EPSG:6312 which is appropriate for the EU
+transformer_from_wgs = Transformer.from_crs("EPSG:4326", "EPSG:6312", always_xy=True)
 # Apply the transformation to each point in the Polygon
 extents_geom = geometry.Polygon(
     [transformer_from_wgs.transform(x, y) for x, y in extents_geom_wgs.exterior.coords]
@@ -74,7 +74,7 @@ extents_geom = extents_geom.convex_hull.simplify(100)
 # This is not technically necessary for the Cyprus example because it is an island.
 extents_geom_buff = extents_geom.buffer(2000)
 # convert back to WGS for passing to osmnx
-transformer_to_wgs = Transformer.from_crs("EPSG:3035", "EPSG:4326", always_xy=True)
+transformer_to_wgs = Transformer.from_crs("EPSG:6312", "EPSG:4326", always_xy=True)
 extents_geom_buff_wgs = geometry.Polygon(
     [transformer_to_wgs.transform(x, y) for x, y in extents_geom_buff.exterior.coords]
 )
@@ -115,8 +115,8 @@ landuses_gdf = pd.concat(dfs)
 # reset the index
 landuses_gdf = landuses_gdf.reset_index()
 landuses_gdf.index = landuses_gdf.index.astype(str)
-# has to be projected 3035 CRS
-landuses_gdf = landuses_gdf.to_crs(3035)
+# has to be projected 6312 CRS
+landuses_gdf = landuses_gdf.to_crs(6312)
 
 # save landuses to a file
 landuses_gdf.to_file(f"../temp/{location_key}_osm_landuses.gpkg")
