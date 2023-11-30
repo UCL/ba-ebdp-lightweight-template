@@ -9,7 +9,7 @@ os.getcwd()
 
 # %%
 # open custom file
-edges_gdf_custom = gpd.read_file(f"../temp/nicosia_2019_3.gpkg")
+edges_gdf_custom = gpd.read_file(f"../temp/pedieos_1.gpkg")
 
 # %%
 # generate the primal nx
@@ -39,7 +39,7 @@ nodes_gdf_dual["line_geometry"] = nodes_gdf_dual.apply(copy_primal_edges, axis=1
 # Set this new column as the main geometry column
 nodes_gdf_dual.set_geometry("line_geometry", inplace=True)
 # set the CRS
-nodes_gdf_dual["line_geometry"].set_crs("EPSG:32636", inplace=True)
+nodes_gdf_dual["line_geometry"].set_crs("EPSG:6312", inplace=True)
 # GPKG can only handle a single official geom column
 # copy old POINT geom column to point_geom as WKT format
 nodes_gdf_dual["point_geom"] = nodes_gdf_dual["geom"].to_wkt()
@@ -51,15 +51,15 @@ nodes_gdf_dual = nodes_gdf_dual.drop(columns=["geom"])
 nodes_gdf_dual = networks.node_centrality_shortest(
     network_structure_dual,
     nodes_gdf_dual,
-    distances=[500, 1000, 2000, 5000, 10000],
+    distances=[500, 1000, 1500],
 )
 
 # run simplest path centrality
 nodes_gdf_dual = networks.node_centrality_simplest(
     network_structure_dual,
     nodes_gdf_dual,
-    distances=[500, 1000, 2000, 5000, 10000],
+    distances=[500, 1000, 1500],
 )
 
 # save
-nodes_gdf_dual.to_file(f"../temp/network_centrality_nicosia_custom_3.gpkg")
+nodes_gdf_dual.to_file(f"../temp/network_centrality_pedieos.gpkg")
