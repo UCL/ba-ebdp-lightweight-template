@@ -14,6 +14,7 @@
 - Visualise or use for future analysis (look for a new column name in the dataset).
 
 ## AGGREGATIVE
+
 This alternative method  is using Copernicus EU blocks
 
 *Note that this is an aggregative (summing) of population from blocks adjacent to street nodes.* 
