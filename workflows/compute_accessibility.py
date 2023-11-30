@@ -60,7 +60,7 @@ extents_geom_wgs = extents_gpd.iloc[0].geometry
 # then convert it to a locally suitable projected CRS before buffering
 # Define the coordinate transformation:
 # - in this case the input geom is from OSM via EPSG:4326
-# - in this case the output geom can uses EPSG:6312 which is appropriate for the EU
+# - in this case the output geom can uses EPSG:6312 which is appropriate for Cyprus
 transformer_from_wgs = Transformer.from_crs("EPSG:4326", "EPSG:6312", always_xy=True)
 # Apply the transformation to each point in the Polygon
 extents_geom = geometry.Polygon(
@@ -69,6 +69,7 @@ extents_geom = geometry.Polygon(
 
 # simplify the geometry, otherwise the OSM API migth complain of overly long URIs
 extents_geom = extents_geom.convex_hull.simplify(100)
+extents_geom = extents_geom.buffer(2000)
 
 # buffer by the largest distance to be used for the largest accessibility analysis
 # This is not technically necessary for the Cyprus example because it is an island.

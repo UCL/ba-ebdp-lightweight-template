@@ -29,6 +29,7 @@ extents_geom = geometry.Polygon(
 
 # simplify the geometry, otherwise the OSM API migth complain of overly long URIs
 extents_geom = extents_geom.convex_hull.simplify(100)
+extents_geom.buffer(2000)
 
 # buffer by the largest distance to be used for the largest centralities or accessibility analysis
 # This is not technically necessary for the Cyprus example because it is an island.
@@ -73,6 +74,7 @@ G_raw_nx_dual = graphs.nx_to_dual(G_raw_nx)
     edges_gdf_dual,
     _network_structure_dual,
 ) = io.network_structure_from_nx(G_raw_nx_dual, crs=6312)
+
 
 # %%
 # attach the primal edges to their corresponding dual nodes
