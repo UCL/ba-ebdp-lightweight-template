@@ -13,8 +13,7 @@ cyprus_dissolved_gdf = cyprus_extents_gdf.dissolve()
 # preferably simplify - units are degrees from WGS84 - optionally take the convex hull
 cyprus_dissolved_gdf.geometry = cyprus_dissolved_gdf.geometry.simplify(0.0001)
 # then save to a file
-# indexing into "geometry" will remove all columns except the geometry
-cyprus_dissolved_gdf[["geometry"]].to_file(f"../temp/cyprus_boundary.gpkg")
+cyprus_dissolved_gdf.to_file(f"../temp/cyprus_boundary.gpkg")
 
 # %%
 # CASE 2 - download for Nicosia
@@ -23,5 +22,4 @@ nicosia_extents_gdf = ox.geocode_to_gdf("R2628520", by_osmid=True, which_result=
 # preferably simplify - units are degrees from WGS84 - optionally take the convex hull
 nicosia_extents_gdf.geometry = nicosia_extents_gdf.geometry.simplify(0.0001)
 # then save to a file
-# indexing into "geometry" will remove all columns except the geometry
 nicosia_extents_gdf.to_file(f"../temp/nicosia_boundary.gpkg")

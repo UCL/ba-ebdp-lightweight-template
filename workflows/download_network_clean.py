@@ -53,41 +53,24 @@ extents_geom_buff = extents_geom.buffer(10000)
 # specify the input and output EPSG CRS appropriate to the case
 # this is returned as a networkX graph
 # set simplify to False so that the steps can be done manually per below
-G_raw_nx = io.osm_graph_from_poly(
+G_clean = io.osm_graph_from_poly(
     extents_geom_buff,
-    simplify=False,
+    simplify=True,
     poly_epsg_code=6312,
     to_epsg_code=6312,
 )
 # set nodes to live where they intersect the original boundary
 # nodes outside of this are only used for preventing edge roll-off
-for nd_key, nd_data in G_raw_nx.nodes(data=True):
+for nd_key, nd_data in G_clean.nodes(data=True):
     if extents_geom.contains(geometry.Point(nd_data["x"], nd_data["y"])):
-        G_raw_nx.nodes[nd_key]["live"] = True
+        G_clean.nodes[nd_key]["live"] = True
     else:
-        G_raw_nx.nodes[nd_key]["live"] = False
-G_raw_nx
+        G_clean.nodes[nd_key]["live"] = False
+G_clean
 
-# %%
-# iterate this cell and update the parameters until happy with the results in QGIS
-# do final round of cleaning directly in QGIS using endpoint snapping
-# See the following link for information on the steps
+
+# See the following link for information on cleaning options
 # https://github.com/benchmark-urbanism/cityseer-examples/blob/main/notebooks/graph_cleaning.ipynb
-G_clean = graphs.nx_remove_dangling_nodes(G_raw_nx)
-G_clean = graphs.nx_consolidate_nodes(
-    G_clean,
-    buffer_dist=20,
-    crawl=True,
-    centroid_by_itx=True,
-    merge_edges_by_midline=True,
-    neighbour_policy="direct",
-)
-G_clean = graphs.nx_split_opposing_geoms(G_clean, buffer_dist=20)
-G_clean = graphs.nx_consolidate_nodes(
-    G_clean, buffer_dist=20, crawl=True, neighbour_policy="indirect"
-)
-G_clean = graphs.nx_remove_filler_nodes(G_clean)
-G_clean = graphs.nx_iron_edges(G_clean)
 
 # create the nodes and edges GeoDataFrames from the networkX graph
 # the network structure can be ignored for now because it can be recreated later
@@ -108,11 +91,11 @@ G_clean_nx = io.nx_from_generic_geopandas(edges_gdf_qgis)
 
 # set nodes to live where they intersect the original boundary
 # nodes outside of this are only used for preventing edge roll-off
-for nd_key, nd_data in G_raw_nx.nodes(data=True):
+for nd_key, nd_data in G_clean.nodes(data=True):
     if extents_geom.contains(geometry.Point(nd_data["x"], nd_data["y"])):
-        G_raw_nx.nodes[nd_key]["live"] = True
+        G_clean.nodes[nd_key]["live"] = True
     else:
-        G_raw_nx.nodes[nd_key]["live"] = False
+        G_clean.nodes[nd_key]["live"] = False
 
 # dual representations can be preferable for visualisation
 # in this case: cast the graph to dual, then attach the original primal edges for visualisation
