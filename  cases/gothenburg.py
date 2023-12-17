@@ -36,9 +36,14 @@ extents_geom_buff = extents_geom.buffer(10000)
 # fetch and automatically clean
 G_clean = io.osm_graph_from_poly(
     extents_geom_buff,
-    simplify=True,
     poly_epsg_code=3007,
     to_epsg_code=3007,
+    simplify=True,
+    # edit the below three parameters if wanted - increasing will be more aggressive
+    # too much will start collapsing block topologies
+    crawl_consolidate_dist=12,  # default is 12
+    parallel_consolidate_dist=15,  # default is 15
+    iron_edges=True,  # default is True - will try to straigthen edges where necessary but set to False if preferred
 )
 # save to QGIS
 edges_gdf_primal = io.geopandas_from_nx(G_clean, crs=3007)
