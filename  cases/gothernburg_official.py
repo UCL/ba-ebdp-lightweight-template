@@ -50,6 +50,7 @@ nodes_gdf["edge_geom"] = nodes_gdf.apply(generate_vis_lines, axis=1)
 nodes_gdf["node_geom_wkt"] = nodes_gdf.apply(geom_to_wkt, axis=1)
 nodes_gdf = nodes_gdf.drop(columns=["geom"])
 nodes_gdf = nodes_gdf.set_geometry("edge_geom")
-
+nodes_gdf = nodes_gdf.set_crs(3007)
+# %%
 nodes_gdf.to_file(f"../temp/gothenburg_network_official_nodes.gpkg")
 edges_gdf.to_file(f"../temp/gothenburg_network_official_edges.gpkg")
