@@ -47,11 +47,11 @@ G_clean = io.osm_graph_from_poly(
 )
 # save to QGIS
 edges_gdf_primal = io.geopandas_from_nx(G_clean, crs=3007)
-edges_gdf_primal.to_file(f"../temp/gothenburg_network_clean.gpkg")
+edges_gdf_primal.to_file(f"../temp/gothenburg_osm_network_cleaned.gpkg")
 
 # %%
 # reopen in case edited in QGIS
-edges_gdf_qgis = gpd.read_file(f"../temp/gothenburg_network_clean.gpkg")
+edges_gdf_qgis = gpd.read_file(f"../temp/gothenburg_osm_network_cleaned.gpkg")
 G_qgis = io.nx_from_generic_geopandas(edges_gdf_qgis)
 # mark nodes inside original unbuffered extents as "live"
 for nd_key, nd_data in G_clean.nodes(data=True):
@@ -67,6 +67,8 @@ nodes_gdf, edges_gdf, network_structure = io.network_structure_from_nx(G_qgis, c
 metrics.networks.node_centrality_shortest(
     network_structure, nodes_gdf, distances=[500, 1000, 2000, 5000, 10000]
 )
+nodes_gdf.to_file(f"../temp/gothenburg_osm_nodes.gpkg")
+edges_gdf.to_file(f"../temp/gothenburg_osm_edges.gpkg")
 
 # %%
 # generate vis lines for nodes - view in QGIS as "edge_geom"
@@ -89,5 +91,4 @@ nodes_gdf = nodes_gdf.set_crs(3007)
 
 # %%
 # save to GPKG
-nodes_gdf.to_file(f"../temp/gothenburg_network_clean_nodes.gpkg")
-nodes_gdf.to_file(f"../temp/gothenburg_network_clean_edges.gpkg")
+nodes_gdf.to_file(f"../temp/gothenburg_osm_nodes_as_edges.gpkg")
