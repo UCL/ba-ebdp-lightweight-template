@@ -56,8 +56,8 @@ extents_geom_buff = extents_geom.buffer(10000)
 G_clean = io.osm_graph_from_poly(
     extents_geom_buff,
     simplify=True,
-    poly_epsg_code=6312,
-    to_epsg_code=6312,
+    poly_crs_code=6312,
+    to_crs_code=6312,
 )
 # set nodes to live where they intersect the original boundary
 # nodes outside of this are only used for preventing edge roll-off

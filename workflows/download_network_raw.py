@@ -40,7 +40,7 @@ extents_geom_buff = extents_geom.buffer(10000)
 # specify the input and output EPSG CRS appropriate to the case
 # this is returned as a networkX graph
 G_raw_nx = io.osm_graph_from_poly(
-    extents_geom_buff, simplify=False, poly_epsg_code=6312, to_epsg_code=6312
+    extents_geom_buff, simplify=False, poly_crs_code=6312, to_crs_code=6312
 )
 # %%
 # set nodes to live where they intersect the original boundary

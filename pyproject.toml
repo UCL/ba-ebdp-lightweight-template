@@ -6,7 +6,7 @@ authors = []
 dependencies = [
     "shapely>=2.0.2",
     "geopandas>=0.14.1",
-    "cityseer>=4.6.5",
+    "cityseer>=4.6.7",
     "osmnx>=1.7.1",
     "momepy>=0.6.0",
     "networkx>=3.2.1",
@@ -19,3 +19,5 @@ requires-python = ">=3.11, <3.12"
 readme = "README.md"
 license = {text = "AGPL-3.0"}
 
+git config --global user.name "John Doe"
+$ git config --global user.email johndoe@example.com
