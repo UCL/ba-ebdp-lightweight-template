@@ -18,6 +18,3 @@ dependencies = [
 requires-python = ">=3.11, <3.12"
 readme = "README.md"
 license = {text = "AGPL-3.0"}
-
-git config --global user.name "John Doe"
-$ git config --global user.email johndoe@example.com
