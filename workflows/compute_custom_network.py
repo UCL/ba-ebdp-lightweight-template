@@ -1,4 +1,5 @@
 """ Runs centrality on a pre-cleaned network."""
+
 # %%
 import geopandas as gpd
 from cityseer.metrics import networks
@@ -6,7 +7,9 @@ from cityseer.tools import graphs, io
 
 # %%
 # open custom file
-edges_gdf_custom = gpd.read_file(f"../temp/nicosia_2019_1.gpkg")
+edges_gdf_custom = gpd.read_file(f"../temp/AbuDhabi.gpkg")
+edges_gdf_custom.explode(inplace=True)
+edges_gdf_custom.reset_index(drop=True, inplace=True)
 
 # %%
 # generate the primal nx
@@ -44,20 +47,20 @@ nodes_gdf_dual["point_geom"] = nodes_gdf_dual["geom"].to_wkt()
 nodes_gdf_dual = nodes_gdf_dual.drop(columns=["geom"])
 
 # %%
+distances = [400, 800, 1200, 2000, 5000, 10000]
 # run shortest path centrality
 nodes_gdf_dual = networks.node_centrality_shortest(
     network_structure_dual,
     nodes_gdf_dual,
-    distances=[500, 1000, 2000, 5000, 10000],
+    distances=distances,
 )
 
 # run simplest path centrality
 nodes_gdf_dual = networks.node_centrality_simplest(
     network_structure_dual,
     nodes_gdf_dual,
-    distances=[500, 1000, 2000, 5000, 10000],
+    distances=distances,
 )
 
 # save
-nodes_gdf_dual.to_file(f"../temp/network_centrality_nicosia_custom.gpkg")
-# %%
+nodes_gdf_dual.to_file(f"../temp/AbuDhabi_w_cent.gpkg")

@@ -1,24 +1,29 @@
 """
 
 """
-import geopandas as gpd
+
 import pathlib
-from cityseer.tools import graphs, io
+
+import geopandas as gpd
 from cityseer.metrics import networks
+from cityseer.tools import graphs, io
 from shapely import geometry
 
-def process_bounds(file_path: pathlib.Path | str, distances: list[int]):
+
+def process_bounds(
+    bounds_path: pathlib.Path | str, out_path: pathlib.Path | str, distances: list[int]
+):
     """ """
-    file_path = pathlib.Path(file_path)
-    extents_gpd = gpd.read_file(file_path)
+    bounds_path = pathlib.Path(bounds_path)
+    extents_gpd = gpd.read_file(bounds_path)
     if not extents_gpd.crs.is_projected:
-        raise IOError('Input spatial boundary must be in a projected CRS.')
+        raise IOError("Input spatial boundary must be in a projected CRS.")
     working_crs = extents_gpd.crs.to_epsg()
-    working_path = file_path.with_suffix('')
+    working_path = bounds_path.with_suffix("")
     if not isinstance(working_crs, int):
-        raise ValueError(f'Expected int for EPSG code: {working_crs}')
-    if not extents_gpd.geom_type[0] in ('Polygon', 'MultiPolygon'):
-        raise ValueError('Input data should be Polygon or MultiPolygon type.')
+        raise ValueError(f"Expected int for EPSG code: {working_crs}")
+    if not extents_gpd.geom_type[0] in ("Polygon", "MultiPolygon"):
+        raise ValueError("Input data should be Polygon or MultiPolygon type.")
     bound_geom = extents_gpd.geometry.unary_union
     extents_geom = bound_geom.convex_hull.simplify(100)
     # TODO: max(distances)
@@ -40,21 +45,21 @@ def process_bounds(file_path: pathlib.Path | str, distances: list[int]):
         _edges_gdf_dual,
         network_structure_dual,
     ) = io.network_structure_from_nx(G_clean_nx_dual, crs=working_crs)
-    
+
     def copy_primal_edges(row):
         return G_clean_nx[row["primal_edge_node_a"]][row["primal_edge_node_b"]][
             row["primal_edge_idx"]
         ]["geom"]
-    
+
     nodes_gdf_dual["primal_edge_geom"] = nodes_gdf_dual.apply(copy_primal_edges, axis=1)
     nodes_gdf_dual.set_geometry("primal_edge_geom", inplace=True)
     nodes_gdf_dual.set_crs(working_crs, inplace=True)
 
     def geom_to_wkt(row):
-        return row['geom'].wkt
-    
+        return row["geom"].wkt
+
     nodes_gdf_dual["point_geom_wkt"] = nodes_gdf_dual.apply(geom_to_wkt, axis=1)
-    nodes_gdf_dual.drop(columns=['geom'], inplace=True)
+    nodes_gdf_dual.drop(columns=["geom"], inplace=True)
 
     # centrality
     nodes_gdf_dual = networks.node_centrality_shortest(
@@ -67,9 +72,11 @@ def process_bounds(file_path: pathlib.Path | str, distances: list[int]):
         nodes_gdf_dual,
         distances=distances,
     )
-    nodes_gdf_dual.to_file(f"{working_path}_centrality.gpkg")
+    nodes_gdf_dual.to_file(out_path)
 
-if __name__ == '__main__':
-    file_path = './temp/AbuDhabi_boundary.gpkg'
-    distances = [500, 1000, 2000, 5000, 10000]
-    process_bounds(file_path, distances)
+
+if __name__ == "__main__":
+    bounds_path = "./temp/AbuDhabi_boundary.gpkg"
+    out_path = "./temp/AbuDhabi_auto_clean_centrality.gpkg"
+    distances = [400, 800, 1200, 2000, 5000, 10000]
+    process_bounds(bounds_path, out_path, distances)
