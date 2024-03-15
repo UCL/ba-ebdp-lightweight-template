@@ -7,9 +7,10 @@ from cityseer.tools import graphs, io
 
 # %%
 # open custom file
-edges_gdf_custom = gpd.read_file(f"../temp/AbuDhabi.gpkg")
-edges_gdf_custom.explode(inplace=True)
+edges_gdf_input = gpd.read_file(f"../temp/AbuDhabi.gpkg")
+edges_gdf_custom = edges_gdf_input.explode(ignore_index=True)
 edges_gdf_custom.reset_index(drop=True, inplace=True)
+edges_gdf_custom
 
 # %%
 # generate the primal nx
