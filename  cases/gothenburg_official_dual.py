@@ -36,31 +36,6 @@ metrics.networks.node_centrality_simplest(
     network_structure, nodes_gdf, distances=[500, 1000, 2000, 5000, 10000]
 )
 
-
-# %%
-# generate vis lines for nodes - view in QGIS as "edge_geom"
-# a function is defined which copies geoms from the originating networkx graph
-# the geometries are being copied directly instead of via WKT since no intermediary saving to disk
-def copy_primal_edges(row):
-    return G_official[row["primal_edge_node_a"]][row["primal_edge_node_b"]][
-        row["primal_edge_idx"]
-    ]["geom"]
-
-
-# apply the function against the GeoPandas DataFrame
-nodes_gdf["line_geometry"] = nodes_gdf.apply(copy_primal_edges, axis=1)
-# Set this new column as the main geometry column
-nodes_gdf.set_geometry("line_geometry", inplace=True)
-# set the CRS
-nodes_gdf["line_geometry"].set_crs("EPSG:3007", inplace=True)
-# GPKG can only handle a single official geom column
-# copy old POINT geom column to point_geom as WKT format
-nodes_gdf["point_geom"] = nodes_gdf["geom"].to_wkt()
-# drop old POINT geom column
-nodes_gdf = nodes_gdf.drop(columns=["geom"])
-nodes_gdf = nodes_gdf.set_crs(3007)
-
-
 # %%
 nodes_gdf.to_file(f"../temp/gothenburg_official_dual_nodes.gpkg")
 edges_gdf.to_file(f"../temp/gothenburg_official_dual_edges.gpkg")

@@ -46,21 +46,6 @@ def process_bounds(
         network_structure_dual,
     ) = io.network_structure_from_nx(G_clean_nx_dual, crs=working_crs)
 
-    def copy_primal_edges(row):
-        return G_clean_nx[row["primal_edge_node_a"]][row["primal_edge_node_b"]][
-            row["primal_edge_idx"]
-        ]["geom"]
-
-    nodes_gdf_dual["primal_edge_geom"] = nodes_gdf_dual.apply(copy_primal_edges, axis=1)
-    nodes_gdf_dual.set_geometry("primal_edge_geom", inplace=True)
-    nodes_gdf_dual.set_crs(working_crs, inplace=True)
-
-    def geom_to_wkt(row):
-        return row["geom"].wkt
-
-    nodes_gdf_dual["point_geom_wkt"] = nodes_gdf_dual.apply(geom_to_wkt, axis=1)
-    nodes_gdf_dual.drop(columns=["geom"], inplace=True)
-
     # centrality
     nodes_gdf_dual = networks.node_centrality_shortest(
         network_structure_dual,

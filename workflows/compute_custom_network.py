@@ -23,31 +23,6 @@ nodes_gdf_dual, edges_gdf_dual, network_structure_dual = io.network_structure_fr
 )
 
 # %%
-# attach the primal edges to their corresponding dual nodes
-# this is useful for downstream visualisation
-
-
-# a function is defined which copies geoms from the originating networkx graph
-# the geometries are being copied directly instead of via WKT since no intermediary saving to disk
-def copy_primal_edges(row):
-    return G_clean_nx[row["primal_edge_node_a"]][row["primal_edge_node_b"]][
-        row["primal_edge_idx"]
-    ]["geom"]
-
-
-# apply the function against the GeoPandas DataFrame
-nodes_gdf_dual["line_geometry"] = nodes_gdf_dual.apply(copy_primal_edges, axis=1)
-# Set this new column as the main geometry column
-nodes_gdf_dual.set_geometry("line_geometry", inplace=True)
-# set the CRS
-nodes_gdf_dual["line_geometry"].set_crs("EPSG:32636", inplace=True)
-# GPKG can only handle a single official geom column
-# copy old POINT geom column to point_geom as WKT format
-nodes_gdf_dual["point_geom"] = nodes_gdf_dual["geom"].to_wkt()
-# drop old POINT geom column
-nodes_gdf_dual = nodes_gdf_dual.drop(columns=["geom"])
-
-# %%
 distances = [400, 800, 1200, 2000, 5000, 10000]
 # run shortest path centrality
 nodes_gdf_dual = networks.node_centrality_shortest(

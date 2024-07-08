@@ -39,35 +39,7 @@ G_clean = io.osm_graph_from_poly(
     poly_crs_code=3007,
     to_crs_code=3007,
     simplify=True,
-    # edit the below three parameters if wanted - increasing will be more aggressive
-    # too much will start collapsing block topologies
-    crawl_consolidate_dist=12,  # default is 12
-    parallel_consolidate_dist=20,  # default is 15
     iron_edges=True,  # default is True - will try to straigthen edges where necessary but set to False if preferred
-    # custom request
-    custom_request="""
-        /* https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL */
-        /* https://overpass-turbo.eu */
-        [out:json];
-        (
-        way["highway"]
-        ["area"!="yes"]
-        ["highway"!~"motorway|motorway_link|trunk|trunk_link|bus_guideway|busway|escape|raceway|proposed|planned|abandoned|platform|construction|emergency_bay|rest_area"]
-        ["track"!~"grade3|grade4|grade5"]
-        ["footway"!="sidewalk"]
-        ["service"!~"parking_aisle|driveway|drive-through|slipway"]
-        ["amenity"!~"charging_station|parking|fuel|motorcycle_parking|parking_entrance|parking_space"]
-        ["indoor"!="yes"]
-        ["level"!="-2"]
-        ["level"!="-3"]
-        ["level"!="-4"]
-        ["level"!="-5"]
-        (poly:"{geom_osm}");
-        );
-        out body;
-        >;
-        out qt;
-        """,
 )
 # save to QGIS
 edges_gdf_primal = io.geopandas_from_nx(G_clean, crs=3007)
@@ -96,29 +68,6 @@ metrics.networks.node_centrality_shortest(
 metrics.networks.node_centrality_simplest(
     network_structure, nodes_gdf, distances=[500, 1000, 2000, 5000, 10000]
 )
-
-
-# %%
-# a function is defined which copies geoms from the originating networkx graph
-# the geometries are being copied directly instead of via WKT since no intermediary saving to disk
-def copy_primal_edges(row):
-    return G_primal[row["primal_edge_node_a"]][row["primal_edge_node_b"]][
-        row["primal_edge_idx"]
-    ]["geom"]
-
-
-# apply the function against the GeoPandas DataFrame
-nodes_gdf["line_geometry"] = nodes_gdf.apply(copy_primal_edges, axis=1)
-# Set this new column as the main geometry column
-nodes_gdf.set_geometry("line_geometry", inplace=True)
-# set the CRS
-nodes_gdf["line_geometry"].set_crs("EPSG:3007", inplace=True)
-# GPKG can only handle a single official geom column
-# copy old POINT geom column to point_geom as WKT format
-nodes_gdf["point_geom"] = nodes_gdf["geom"].to_wkt()
-# drop old POINT geom column
-nodes_gdf = nodes_gdf.drop(columns=["geom"])
-nodes_gdf = nodes_gdf.set_crs(3007)
 
 # %%
 # save to GPKG

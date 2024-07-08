@@ -17,7 +17,7 @@ from pyproj import Transformer
 from shapely import geometry
 
 # location key for naming files
-location_key = "nicosia"
+location_key = "cyprus"
 
 # read the extents file
 extents_gpd = gpd.read_file(f"../temp/{location_key}_boundary.gpkg")
@@ -81,45 +81,14 @@ edges_gdf_primal = io.geopandas_from_nx(G_clean, crs=6312)
 edges_gdf_primal.to_file(f"../temp/{location_key}_network_clean_edges_primal.gpkg")
 
 # %%
-# reopen after editing in QGIS
-edges_gdf_qgis = gpd.read_file(
-    f"../temp/{location_key}_network_clean_edges_primal.gpkg"
-)
-# %%
-# convert to nx
-G_clean_nx = io.nx_from_generic_geopandas(edges_gdf_qgis)
-
-# set nodes to live where they intersect the original boundary
-# nodes outside of this are only used for preventing edge roll-off
-for nd_key, nd_data in G_clean.nodes(data=True):
-    if extents_geom.contains(geometry.Point(nd_data["x"], nd_data["y"])):
-        G_clean.nodes[nd_key]["live"] = True
-    else:
-        G_clean.nodes[nd_key]["live"] = False
-
 # dual representations can be preferable for visualisation
 # in this case: cast the graph to dual, then attach the original primal edges for visualisation
-G_clean_nx_dual = graphs.nx_to_dual(G_clean_nx)
+G_clean_nx_dual = graphs.nx_to_dual(G_clean)
 (
     nodes_gdf_dual,
     edges_gdf_dual,
     _network_structure_dual,
 ) = io.network_structure_from_nx(G_clean_nx_dual, crs=6312)
-
-
-# attach the primal edges to their corresponding dual nodes
-# this is useful for downstream visualisation
-# i.e. it is often more convenient to visualise the dual node data as the corresponding source (primal) edge
-# GeoPandas can't be saved with multiple geom columns, so use WKT for now
-# a function is defined which copies geoms from the originating networkx graph
-def copy_primal_edges(row):
-    return G_clean_nx[row["primal_edge_node_a"]][row["primal_edge_node_b"]][
-        row["primal_edge_idx"]
-    ]["geom"].wkt
-
-
-# apply the function against the GeoPandas DataFrame
-nodes_gdf_dual["primal_edge_geom"] = nodes_gdf_dual.apply(copy_primal_edges, axis=1)
 
 # %% save dual to GPKG
 nodes_gdf_dual.to_file(f"../temp/{location_key}_network_clean_nodes_dual.gpkg")

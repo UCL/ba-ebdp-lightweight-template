@@ -75,22 +75,6 @@ G_raw_nx_dual = graphs.nx_to_dual(G_raw_nx)
     _network_structure_dual,
 ) = io.network_structure_from_nx(G_raw_nx_dual, crs=6312)
 
-
-# %%
-# attach the primal edges to their corresponding dual nodes
-# this is useful for downstream visualisation
-# i.e. it is often more convenient to visualise the dual node data as the corresponding source (primal) edge
-# GeoPandas can't be saved with multiple geom columns, so use WKT for now
-# a function is defined which copies geoms from the originating networkx graph
-def copy_primal_edges(row):
-    return G_raw_nx[row["primal_edge_node_a"]][row["primal_edge_node_b"]][
-        row["primal_edge_idx"]
-    ]["geom"].wkt
-
-
-# apply the function against the GeoPandas DataFrame
-nodes_gdf_dual["primal_edge_geom"] = nodes_gdf_dual.apply(copy_primal_edges, axis=1)
-
 # %% save dual to GPKG
 nodes_gdf_dual.to_file(f"../temp/{location_key}_network_raw_nodes_dual.gpkg")
 edges_gdf_dual.to_file(f"../temp/{location_key}_network_raw_edges_dual.gpkg")
